@@ -23,9 +23,9 @@ ANNEX PAGE REQUEST
 
    AUTHOR:  Brown University. Archives
    Brown University Archives Biographical Files
-   IMPRINT: 
-   PUB DATE: 
-   DESC:    
+   IMPRINT:
+   PUB DATE:
+   DESC:
    CALL NO: 1-S Box 48
    VOLUME:  Box 48
    BARCODE: 31236097691771
@@ -33,8 +33,8 @@ ANNEX PAGE REQUEST
    REC NO:  .i18459560
    LOCATION: ANNEX HAY
    PICKUP AT: John Hay Library
-   NOTE: Butti, Raymond
-   OPACMSG: 
+   NOTE: Jjjjj, Fffffff
+   OPACMSG:
 
 
 
@@ -65,9 +65,9 @@ ANNEX PAGE REQUEST
 
    AUTHOR:  Brown University. Archives
    Brown University Archives Biographical Files
-   IMPRINT: 
-   PUB DATE: 
-   DESC:    
+   IMPRINT:
+   PUB DATE:
+   DESC:
    CALL NO: 1-S Box 96
    VOLUME:  Box 96
    BARCODE: 31236074029706
@@ -75,8 +75,8 @@ ANNEX PAGE REQUEST
    REC NO:  .i18730256
    LOCATION: ANNEX HAY
    PICKUP AT: John Hay Library
-   NOTE: Butti, Raymond
-   OPACMSG: 
+   NOTE: Jjjjj, Fffffff
+   OPACMSG:
 
 
 
@@ -105,10 +105,10 @@ ANNEX PAGE REQUEST
    forward to the circulation unit.
 
 
-   AUTHOR:  
+   AUTHOR:
    TITLE:   Mechanical engineering
    [New York, American Society of Mechanical Enginee
-   PUB DATE: 
+   PUB DATE:
    DESC:    v. ill. 28 cm
    CALL NO: 1-SIZE TJ1 .M4 58 (1936)
    VOLUME:  58 (1936)
@@ -117,7 +117,7 @@ ANNEX PAGE REQUEST
    REC NO:  .i18077099
    LOCATION: ANNEX
    PICKUP AT: Sciences Library
-   OPACMSG: 
+   OPACMSG:
 
 
 
@@ -147,20 +147,20 @@ ANNEX PAGE REQUEST
    forward to the circulation unit.
 
 
-   AUTHOR:  
+   AUTHOR:
    Indianisme et bouddhisme : mélanges offerts à Mgr
    Louvain-la-Neuve : Université catholique de Louva
    PUB DATE: 1980
    xvi, 376 p., [14] p. of plates : ill., port. ; 27
    CALL NO: BQ286 .I53 1980
-   VOLUME:  
+   VOLUME:
    BARCODE: 3 1236 00648 5372
    STATUS: AVAILABLE
    REC NO:  .i10310561
    LOCATION: ANNEX
    PICKUP AT: Rockefeller Library
    NOTE: 1980
-   OPACMSG: 
+   OPACMSG:
 
 
 
@@ -195,14 +195,14 @@ ANNEX PAGE REQUEST
    PUB DATE: c1992
    DESC:    xvi, 183 p. : ill. ; 22 cm
    CALL NO: BX8495.H375 W48 1992
-   VOLUME:  
+   VOLUME:
    BARCODE: 3 1236 00841 8173
    STATUS: AVAILABLE
    REC NO:  .i11132968
    LOCATION: ANNEX
    PICKUP AT: Rockefeller Library
    NOTE: 1992
-   OPACMSG: 
+   OPACMSG:
 
 
 
