@@ -5,23 +5,21 @@ import datetime, json, logging, os, pprint, smtplib, urllib, urllib2
 from email.Header import Header
 from email.mime.text import MIMEText
 
-from process_email_pageslips.lib.parser_helper import Parser
-
-
+LOG_PATH = os.environ['EML_PGSLP__LOG_PATH']
+LOG_LEVEL = os.environ['EML_PGSLP__LOG_LEVEL']  # 'DEBUG' or 'INFO'
+log_level = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+logging.basicConfig(
+    filename=LOG_PATH, level=log_level[LOG_LEVEL],
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    datefmt='%d/%b/%Y %H:%M:%S'
+    )
 log = logging.getLogger(__name__)
-if not logging._handlers:  # true when module accessed by queue-jobs
-    LOG_PATH = os.environ['EML_PGSLP__LOG_PATH']
-    LOG_LEVEL = os.environ['EML_PGSLP__LOG_LEVEL']  # 'DEBUG' or 'INFO'
-    log_level = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
-    logging.basicConfig(
-        filename=LOG_PATH, level=log_level[LOG_LEVEL],
-        format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
-        datefmt='%d/%b/%Y %H:%M:%S'
-        )
-    log.debug( 'handler set' )
 log.debug( 'START' )
 
-prsr = Parser()
+from process_email_pageslips.lib.parser import Parser
+# from lib.parser import Parser
+
+
 
 
 class ItemListMaker( object ):
