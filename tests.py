@@ -32,17 +32,35 @@ class ItemListMakerTest( unittest.TestCase ):
 
     def setUp( self ):
         self.item_list_maker = utility_code.ItemListMaker()
+        self.test_lst = [
+            {'source': 'test_mail_01.txt',
+                'explanation': 'random entries',
+                'count': 'foo',
+                'expected': [
+                    u'foo'
+                ]
+            },
+            {'source': 'test_mail_02.txt',
+                'explanation': 'random entries',
+                'count': 'foo2',
+                'expected': [
+                    u'foo2'
+                ]
+            },
+        ]
 
     def test_make_lines( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') ) as f:
-          text = f.read()
-        lines = self.item_list_maker.make_lines( text )
-        self.assertEqual(
-          list,
-          type(lines) )
-        self.assertEqual(
-          unicode,
-          type(lines[0]) )
+        """ Checks for unicode lines. """
+        for source_dct in self.test_lst:
+            filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, source_dct['source'] )
+            log.debug( 'testing source_file, ```%s```' % filepath )
+            with open( filepath ) as f:
+                utf8_text = f.read()
+                text = utf8_text.decode( 'utf-8' )
+            lines = self.item_list_maker.make_lines( text )
+            self.assertEqual( list, type(lines) )
+            for line in lines:
+                self.assertEqual( unicode, type(line) )
 
     ## test clean_lines()
 
