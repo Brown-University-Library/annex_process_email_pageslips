@@ -16,7 +16,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 log.debug( 'START' )
 
-from process_email_pageslips.lib.parser import Parser
+from process_email_pageslips.lib.parser_helper import Parser
 
 
 class ItemListMaker( object ):

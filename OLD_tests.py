@@ -23,7 +23,7 @@ log.debug( 'log setup' )
 ## set up environment ##
 
 sys.path.append( os.environ['EML_PGSLP__ENCLOSING_PROJECT_PATH'] )
-from process_email_pageslips.lib import utility_code
+from process_email_pageslips import utility_code
 
 TEST_FILES_DIR_PATH = os.environ['EML_PGSLP__TEST_FILES_DIR_PATH']
 

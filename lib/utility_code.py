@@ -16,7 +16,8 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 log.debug( 'START' )
 
-from process_email_pageslips.lib.parser import Parser
+from process_email_pageslips.lib.parser_helper import Parser
+from process_email_pageslips.lib.item_list_maker import ItemListMaker
 
 
 def processor_wrapper( filepath ):
@@ -65,31 +66,6 @@ def checkFileExistence( file_path ):
   # end def checkFileExistence()
 
 
-
-# def convertJosiahLocationCode( code ):
-#   '''
-#   - Purpose: input - josiah_location_code; output - las customer_code
-#   - Called by: utility_code.parseJosiahLocationCode()
-#   '''
-#   JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX = os.environ['EML_PGSLP__JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX']
-#   full_url = '%s%s' % ( JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
-#   try:
-#     string_data = urllib.urlopen( full_url ).read()
-#     json_data = json.loads( string_data )
-#     result = json_data['result']['returned_las_code']
-#     return result
-#   except Exception, e:
-#     message = 'problem coverting josiah-location-code, `%s`' % code
-#     log.debug( message )
-#     logger.error( 'exception, `%s`' % unicode(repr(e)) )
-#     subject = 'annex process pageslips warning (pageslips went through)'
-#     m = Mailer( subject, message )
-#     m.send_email()
-#     updateLog( message='- in convertJosiahLocationCode(); %s' % message )
-#     return 'unknown_location'
-#   # end def convertJosiahLocationCode()
-
-
 def convertJosiahLocationCode( code ):
   '''
   - Purpose: input - josiah_location_code; output - las customer_code
@@ -106,7 +82,7 @@ def convertJosiahLocationCode( code ):
   except Exception, e:
     message = 'problem coverting josiah-location-code, `%s`' % code
     log.debug( message )
-    logger.error( 'exception, `%s`' % unicode(repr(e)) )
+    log.error( 'exception, `%s`' % unicode(repr(e)) )
     subject = 'annex process pageslips warning (pageslips went through)'
     m = Mailer( subject, message )
     m.send_email()
