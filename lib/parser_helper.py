@@ -33,27 +33,41 @@ class Parser( object ):
       TODO: - refactor rest of parsing functions into here.
             - refactor code to call this new parse_all() function from the controller (now for testing only) """
 
-    def parse_all( self, single_pageslip_string ):
-        """ Calls individual parser functions.
-            Called by: we'll see. """
-        record_number = utility_code.parseRecordNumber( single_pageslip_string )
-        book_barcode = self.parse_bookbarcode( single_pageslip_string )
-        las_delivery_stop = utility_code.parseJosiahPickupAtCode(single_pageslip_string)
-        las_customer_code = self.parse_josiah_location_code( single_pageslip_string )
-        patron_name = utility_code.parsePatronName( single_pageslip_string )
-        patron_barcode = utility_code.parsePatronBarcode( single_pageslip_string )
-        title = self.parse_title( single_pageslip_string )
-        las_date = utility_code.prepareLasDate()
-        note = self.parse_note( single_pageslip_string )
+    def parse_all( self, single_pageslip_lines ):
+        data_dct = self.prep_data_dct( single_pageslip_lines )
         full_line = '''"%s","%s","%s","%s","%s","%s","%s","%s","%s"''' % (
-            record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note )
+            data_dct['record_number'],
+            data_dct['book_barcode'],
+            data_dct['las_delivery_stop'],
+            data_dct['las_customer_code'],
+            data_dct['patron_name'],
+            data_dct['patron_barcode'],
+            data_dct['title'],
+            data_dct['las_date'],
+            data_dct['note'] )
         log.debug( 'full_line, ```%s```' % full_line )
         return full_line
 
-    def parse_note( self, pageslip_lines ):
+    def prep_data_dct( self, single_pageslip_lines ):
+        """ Calls individual parser functions.
+            Called by: we'll see. """
+        dct = {}
+        dct['record_number'] = utility_code.parseRecordNumber( single_pageslip_lines )
+        dct['book_barcode'] = self.parse_bookbarcode( single_pageslip_lines )
+        dct['las_delivery_stop'] = utility_code.parseJosiahPickupAtCode(single_pageslip_lines)
+        dct['las_customer_code'] = self.parse_josiah_location_code( single_pageslip_lines )
+        dct['patron_name'] = utility_code.parsePatronName( single_pageslip_lines )
+        dct['patron_barcode'] = utility_code.parsePatronBarcode( single_pageslip_lines )
+        dct['title'] = self.parse_title( single_pageslip_lines )
+        dct['las_date'] = utility_code.prepareLasDate()
+        dct['note'] = self.parse_note( single_pageslip_lines )
+        log.debug( 'data_dct, ```%s```' % pprint.pformat(dct) )
+        return dct
+
+    def parse_note( self, single_pageslip_lines ):
         """ Extracts possible note from lines of a single pageslip.
             Called by controller.py """
-        initial_note = self.grab_note( pageslip_lines )
+        initial_note = self.grab_note( single_pageslip_lines )
         cleaned_note = self.clean_note( initial_note )
         return cleaned_note
 
