@@ -91,9 +91,20 @@ class Parser( object ):
             Called by parse_note() """
         cleaned_note = initial_note.replace( '  ', ' ' )
         cleaned_note = cleaned_note.replace( '"', u"'" )
+        cleaned_note = cleaned_note.replace( 'OPACMSG:', '' )
+        cleaned_note = cleaned_note.strip()
         if len( cleaned_note.strip() ) == 0:
           cleaned_note = 'no_note'
         return cleaned_note
+
+    # def clean_note( self, initial_note ):
+    #     """ Removes spaces from note, or sets default note.
+    #         Called by parse_note() """
+    #     cleaned_note = initial_note.replace( '  ', ' ' )
+    #     cleaned_note = cleaned_note.replace( '"', u"'" )
+    #     if len( cleaned_note.strip() ) == 0:
+    #       cleaned_note = 'no_note'
+    #     return cleaned_note
 
     def parse_bookbarcode( self, single_page_slip ):
         """ Parses book-barcode from lines of a single pageslip.

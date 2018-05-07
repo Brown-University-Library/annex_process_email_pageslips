@@ -119,7 +119,8 @@ class ItemListMaker( object ):
                     item = self.remove_empty_lines( item )
                     new_items.append( item )
         self.items = new_items
-        log.debug( 'self.items, ```%s```' % pprint.pformat(self.items) )
+        log.debug( 'self.items pprinted, ```%s```' % pprint.pformat(self.items) )
+        log.debug( 'self.items, ```%s```' % self.items )
         return
 
     def remove_empty_lines( self, item ):

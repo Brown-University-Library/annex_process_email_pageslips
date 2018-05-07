@@ -215,7 +215,7 @@ class ParserTest( unittest.TestCase ):
         """ Note, line order is:
                 record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note.
             However, the dicts below are sorted. """
-        self.test_lst = [
+        self.source_filepaths = [
             {'source': 'test_mail_01.txt',
                 'pageslip_index': 0,
                 'explanation': 'contains note',
@@ -248,12 +248,9 @@ class ParserTest( unittest.TestCase ):
             },
         ]
 
-
-
-
     def test_prep_data_dct(self):
         """ Checks parsing data elements. """
-        for source_dct in self.test_lst:
+        for source_dct in self.source_filepaths:
             parser = parser_helper.Parser()
             item_list_maker = item_list_helper.ItemListMaker()
             filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, source_dct['source'] )
