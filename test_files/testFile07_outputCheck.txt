@@ -1,0 +1,3 @@
+".i10295297","31236070303881","RO","QS","name","11234123451234","Irish Orpheus, the life of Patrick S. Gilmore, ba","05-27-05","?"
+".i11028008","JH0001","HA","QH","name","11234123451234","The identification of the mental and the physical","05-27-05","?"
+".i11800264","31236070000511","SC","QS","name","11234123451234","The Electric journal","05-27-05","?"
