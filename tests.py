@@ -144,21 +144,10 @@ class InputOutputTest( unittest.TestCase ):
 
     def setUp(self):
         self.test_lst = [
-            {'source': 'testFile01_singleEntry.txt',
+            {'source': 'test_mail_01.txt',
                 'explanation': 'single entry',
                 'expected': [
-                    u'".i10295297","31236070303881","RO","QS","name","barcod","Irish Orpheus, the life of Patrick S. Gilmore, ba","Mon May 07 2018","no_note"'
-                    ]
-                },
-            {'source': 'testFile12_missing_brown_address.txt',
-                'explanation': 'missing Brown address',
-                'expected': [
-                    u'".i10513874","31236000972821","RO","QS","asdfg qwertyu","11234123451208","The idea of usury, from tribal brotherhood to uni","Mon May 07 2018","no_note"',
-                    u'".i10513875","31236002009820","RO","QS","asdfg qwertyu","11234123451208","The scholastic analysis of usury","Mon May 07 2018","no_note"',
-                    u'".i11678284","31236009408801","SC","QS","BORROW DIRECT ANNEX","11234123451241","Nightdrive : modern German short stories","Mon May 07 2018","no_note"',
-                    u'".i14260733","31236072175758","SC","QS","BORROW DIRECT ANNEX","11234123451241","Hints on household taste in furniture, upholstery","Mon May 07 2018","no_note"',
-                    u'".i10525950","31236001175572","RO","QS","asdfg qwertyu","11234123451263","Child labor legislation in the southern textile s","Mon May 07 2018","no_note"',
-                    u'".i14977791","31236073294087","RO","QS","asdfg qwertyu","11234123451263","Child labor legislation in the United States","Mon May 07 2018","no_note"'
+                    u'foo'
                     ]
                 },
         ]
