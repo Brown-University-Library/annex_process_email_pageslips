@@ -191,10 +191,11 @@ class InputOutputTest( unittest.TestCase ):
                     u'".i11132968","31236008418173","RO","QS","INTERLIBRARY LOAN/Nnnnn Yy","12345678901234","The Hedstroms and the bethel ship saga : Methodis","Mon May 07 2018","1992"'
                     ]
                 },
-            {'source': 'test_mail_01.txt',
+            {'source': 'test_mail_02.txt',
                 'explanation': 'single entry',
                 'expected': [
-                    u'foo'
+                    u'''".i11777585","31236013234144","RO","QS","Oooooooo I Aaaa","12345678901234","Licy e il Gattopardo : lettere d'amore di Giusepp","Mon May 07 2018","no_note"''',
+
                     ]
                 },
         ]
