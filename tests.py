@@ -24,6 +24,8 @@ log.debug( 'log setup' )
 
 sys.path.append( os.environ['EML_PGSLP__ENCLOSING_PROJECT_PATH'] )
 from process_email_pageslips.lib import utility_code
+from process_email_pageslips.lib import parser_helper
+from process_email_pageslips.lib import item_list_helper
 
 TEST_FILES_DIR_PATH = os.environ['EML_PGSLP__TEST_FILES_DIR_PATH']
 
@@ -210,45 +212,58 @@ class InputOutputTest( unittest.TestCase ):
 class ParserTest( unittest.TestCase ):
 
     def setUp( self ):
+        """ Note, line order is:
+                record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note.
+            However, the dicts below are sorted. """
         self.test_lst = [
             {'source': 'test_mail_01.txt',
-                'explanation': 'random entries',
+                'pageslip_index': 0,
+                'explanation': 'contains note',
                 'expected': {
-                    'record_number': 'foo',
-                    'book_barcode': 'foo',
-                    'las_delivery_stop': 'foo',
-                    'las_customer_code': 'foo',
-                    'patron_name': 'foo',
-                    'patron_barcode': 'foo',
-                    'title': 'foo',
-                    'las_date': 'foo',
-                    'note': 'foo',
-                }
+                    u'book_barcode': u'31236097691771',
+                    u'las_customer_code': u'QH',
+                    u'las_date': 'Mon May 07 2018',
+                    u'las_delivery_stop': u'HA',
+                    u'note': u'Jjjjj, Fffffff',
+                    u'patron_barcode': u'21234567890123',
+                    u'patron_name': u'HAY CIRC STAFF (GHOST)',
+                    u'record_number': u'.i18459560',
+                    u'title': u'Brown University Archives Biographical Files'
+                    }
             },
             {'source': 'test_mail_02.txt',
-                'explanation': 'random entries',
+                'pageslip_index': 0,
+                'explanation': 'no note',
                 'expected': {
-                    'record_number': 'foo',
-                    'book_barcode': 'foo',
-                    'las_delivery_stop': 'foo',
-                    'las_customer_code': 'foo',
-                    'patron_name': 'foo',
-                    'patron_barcode': 'foo',
-                    'title': 'foo',
-                    'las_date': 'foo',
-                    'note': 'foo',
-                }
+                    u'book_barcode': u'31236082141766',
+                    u'las_customer_code': u'QH',
+                    u'las_date': 'Mon May 07 2018',
+                    u'las_delivery_stop': u'HA',
+                    u'note': u'no_note',
+                    u'patron_barcode': u'12345678901234',
+                    u'patron_name': u'Eeeeeee B Ssss',
+                    u'record_number': u'.i11419377',
+                    u'title': u'New principles of gardening: or, The laying out a'
+                    }
             },
         ]
+
+
+
 
     def test_prep_data_dct(self):
         """ Checks parsing data elements. """
         for source_dct in self.test_lst:
             parser = parser_helper.Parser()
+            item_list_maker = item_list_helper.ItemListMaker()
             filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, source_dct['source'] )
             log.debug( 'testing source_file, ```%s```' % filepath )
-            single_pageslip_lines = item_list_maker.something( filepath )
-            self.assertEqual( source_dct['expected'], parser.prep_data_dct(single_pageslip_lines) )
+            with open( filepath ) as f:
+                utf8_text = f.read()
+                text = utf8_text.decode( 'utf-8' )
+                items = item_list_maker.make_item_list( text )
+                single_pageslip_lines = items[ source_dct['pageslip_index'] ]
+                self.assertEqual( source_dct['expected'], parser.prep_data_dct(single_pageslip_lines) )
 
     # def test_parseNote(self):
     #     """ Tests note-parsing from lines of single pageslip. """
