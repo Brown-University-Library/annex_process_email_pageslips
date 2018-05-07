@@ -16,8 +16,8 @@ logging.basicConfig(
     format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
     datefmt='%d/%b/%Y %H:%M:%S'
     )
-logger = logging.getLogger(__name__)
-logger.debug( 'log setup' )
+log = logging.getLogger(__name__)
+log.debug( 'log setup' )
 
 
 ## set up environment ##
@@ -119,7 +119,7 @@ class ItemListMakerTest( unittest.TestCase ):
         with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile14_BrownU_auth_confusion.txt') ) as f:
           text = f.read()
         processed_data = self.item_list_maker.make_item_list( text )
-        # logger.debug( 'processed_data, `%s`' % pprint.pprint(processed_data) )
+        # log.debug( 'processed_data, `%s`' % pprint.pprint(processed_data) )
         self.assertEqual( 5, len(processed_data) )  # 1 page-slip
         self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
 
@@ -156,7 +156,7 @@ class InputOutputTest( unittest.TestCase ):
         """ Checks processed-output of multiple files. """
         for source_dct in self.test_lst:
             filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, source_dct['source'] )
-            logger.debug( 'testing source_file, ```%s```' % filepath )
+            log.debug( 'testing source_file, ```%s```' % filepath )
             self.assertEqual( source_dct['expected'], utility_code.processor_wrapper( filepath ) )
 
     ## end class InputOutputTest()

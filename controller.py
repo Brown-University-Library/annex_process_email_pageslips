@@ -31,7 +31,7 @@ logging.basicConfig(
     datefmt='%d/%b/%Y %H:%M:%S'
     )
 logger = logging.getLogger(__name__)
-logger.debug( 'START' )
+log.debug( 'START' )
 
 
 
