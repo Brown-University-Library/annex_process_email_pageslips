@@ -179,6 +179,16 @@ class InputOutputTest( unittest.TestCase ):
             {'source': 'test_mail_01.txt',
                 'explanation': 'single entry',
                 'expected': [
+                    u'".i18459560","31236097691771","HA","QH","HAY CIRC STAFF (GHOST)","21234567890123","Brown University Archives Biographical Files","Mon May 07 2018","Jjjjj, Fffffff"',
+                    u'".i18730256","31236074029706","HA","QH","HAY CIRC STAFF (GHOST)","21234567890123","Brown University Archives Biographical Files","Mon May 07 2018","Jjjjj, Fffffff"',
+                    u'".i18077099","31236102480350","SC","QS","Lllll D Llllll","12345678901234","Mechanical engineering","Mon May 07 2018","no_note"',
+                    u'".i10310561","31236006485372","RO","QS","INTERLIBRARY LOAN/Eeeee Nn","12345678901234","Indianisme et bouddhisme : m\xe9langes offerts \xe0 Mgr","Mon May 07 2018","1980"',
+                    u'".i11132968","31236008418173","RO","QS","INTERLIBRARY LOAN/Nnnnn Yy","12345678901234","The Hedstroms and the bethel ship saga : Methodis","Mon May 07 2018","1992"'
+                    ]
+                },
+            {'source': 'test_mail_01.txt',
+                'explanation': 'single entry',
+                'expected': [
                     u'foo'
                     ]
                 },
