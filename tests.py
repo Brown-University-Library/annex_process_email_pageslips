@@ -35,14 +35,16 @@ class ItemListMakerTest( unittest.TestCase ):
         self.test_lst = [
             {'source': 'test_mail_01.txt',
                 'explanation': 'random entries',
-                'count': 'foo',
+                'pageslip_count': 5,
+                'line_counts': [1, 2],
                 'expected': [
                     u'foo'
                 ]
             },
             {'source': 'test_mail_02.txt',
                 'explanation': 'random entries',
-                'count': 'foo2',
+                'pageslip_count': 5,
+                'line_counts': [2, 3],
                 'expected': [
                     u'foo2'
                 ]
@@ -90,69 +92,81 @@ class ItemListMakerTest( unittest.TestCase ):
 
     ## test make_item_list()
 
-    def test_single_pageslip( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        self.assertEqual( 1, len(processed_data) )  # 1 page-slip
-        self.assertEqual( 39, len(processed_data[0]) )  # 39 lines in the first (and only) page-slip
+    def test_pageslip_counts( self ):
+        """ Checks number of pageslips found. """
+        for test_dct in self.test_lst:
+            filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, test_dct['source'] )
+            log.debug( 'testing source_file, ```%s```' % filepath )
+            with open( filepath ) as f:
+                utf8_text = f.read()
+                text = utf8_text.decode( 'utf-8' )
+            lines = self.item_list_maker.make_item_list( text )
+            self.assertEqual( test_dct['pageslip_count'], len(lines) )
 
-    def test_single_short_pageslip( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile02_incorrectSciPickup.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        self.assertEqual( 1, len(processed_data) )  # 1 page-slip
-        self.assertEqual( 35, len(processed_data[0]) )  # lines in the first (and only) page-slip
 
-    def test_single_pageslip_no38( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile11_singleNo38.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        self.assertEqual( 1, len(processed_data) )  # 1 page-slip
-        self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
+    # def test_single_pageslip( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    #     self.assertEqual( 39, len(processed_data[0]) )  # 39 lines in the first (and only) page-slip
 
-    def test_multiple_pageslips( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile03_itemNumberAddition.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        self.assertEqual( 6, len(processed_data) )  # page-slips
-        self.assertEqual( 39, len(processed_data[0]) )  # lines
+    # def test_single_short_pageslip( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile02_incorrectSciPickup.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    #     self.assertEqual( 35, len(processed_data[0]) )  # lines in the first (and only) page-slip
 
-    def test_multiple_pageslips_one_missing_38( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        # pprint.pprint( processed_data )
-        self.assertEqual( 7, len(processed_data) )  # page-slips
-        self.assertEqual( 39, len(processed_data[0]) )  # lines
-        self.assertEqual( 'today. Thanks.', processed_data[1][-1].strip() )  # last line of second page-slip
+    # def test_single_pageslip_no38( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile11_singleNo38.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    #     self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
 
-    def test_multiple_pageslips_missing_brown_university_start( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile12_missing_brown_address.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        self.assertEqual( 6, len(processed_data) )  # page-slips
+    # def test_multiple_pageslips( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile03_itemNumberAddition.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     self.assertEqual( 6, len(processed_data) )  # page-slips
+    #     self.assertEqual( 39, len(processed_data[0]) )  # lines
 
-    def test_BrownU_in_author( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile14_BrownU_auth_confusion.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        # log.debug( 'processed_data, `%s`' % pprint.pprint(processed_data) )
-        self.assertEqual( 5, len(processed_data) )  # 1 page-slip
-        self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
+    # def test_multiple_pageslips_one_missing_38( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     # pprint.pprint( processed_data )
+    #     self.assertEqual( 7, len(processed_data) )  # page-slips
+    #     self.assertEqual( 39, len(processed_data[0]) )  # lines
+    #     self.assertEqual( 'today. Thanks.', processed_data[1][-1].strip() )  # last line of second page-slip
 
-    def test_BrownU_in_title( self ):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile13_BrownU_title_confusion.txt') ) as f:
-          text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    # def test_multiple_pageslips_missing_brown_university_start( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile12_missing_brown_address.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     self.assertEqual( 6, len(processed_data) )  # page-slips
 
-    def test_BrownU_in_address( self):
-        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile15_BrownU_in_address.txt') ) as f:
-            text = f.read()
-        processed_data = self.item_list_maker.make_item_list( text )
-        # pprint.pprint( processed_data )
-        self.assertEqual( 3, len(processed_data) )
+    # def test_BrownU_in_author( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile14_BrownU_auth_confusion.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     # log.debug( 'processed_data, `%s`' % pprint.pprint(processed_data) )
+    #     self.assertEqual( 5, len(processed_data) )  # 1 page-slip
+    #     self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
+
+    # def test_BrownU_in_title( self ):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile13_BrownU_title_confusion.txt') ) as f:
+    #       text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+
+    # def test_BrownU_in_address( self):
+    #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile15_BrownU_in_address.txt') ) as f:
+    #         text = f.read()
+    #     processed_data = self.item_list_maker.make_item_list( text )
+    #     # pprint.pprint( processed_data )
+    #     self.assertEqual( 3, len(processed_data) )
 
     ## end class ItemListMakerTest()
 
