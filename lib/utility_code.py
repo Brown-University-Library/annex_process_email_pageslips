@@ -76,7 +76,7 @@ class ItemListMaker( object ):
         elif 'ANNEX PAGE REQUEST' in line:
             pass
         else:
-              log.debug( 'conditionally appending line, ```%s```' % line )
+              # log.debug( 'conditionally appending line, ```%s```' % line )
               self.item.append( line )  # adds line to existing or new item
         return
 
@@ -368,19 +368,20 @@ def parsePatronName( pageslip_lines ):
 
 
 def parseRecordNumber( single_page_slip ):
-  '''
-  - Purpose: to extract a record number from a page-slip.
-  - Called by: opac_to_las_python_parser_code.controller
-  '''
-  record_number = 'init'
-  for line in single_page_slip:
-    stripped_line = line.strip()
-    if 'REC NO:' in stripped_line:
-      record_number = stripped_line[-10:]
-      break
-  log.debug( 'record_number, `%s`' % record_number )
-  return record_number
-
+    '''
+    - Purpose: to extract a record number from a page-slip.
+    - Called by: opac_to_las_python_parser_code.controller
+    '''
+    record_number = 'init'
+    for line in single_page_slip:
+        stripped_line = line.strip()
+        if 'REC NO:' in stripped_line:
+              record_number = stripped_line[-10:]
+              break
+    if record_number == 'init':
+        log.warning( 'no record_number found for pageslip, ```%s```' % single_page_slip )
+    log.debug( 'record_number, `%s`' % record_number )
+    return record_number
 
 
 

@@ -36,14 +36,14 @@ class Parser( object ):
     def parse_all( self, single_pageslip_string ):
         """ Calls individual parser functions.
             Called by: we'll see. """
-        record_number = parseRecordNumber( single_pageslip_string )
+        record_number = utility_code.parseRecordNumber( single_pageslip_string )
         book_barcode = self.parse_bookbarcode( single_pageslip_string )
-        las_delivery_stop = parseJosiahPickupAtCode(single_pageslip_string)
+        las_delivery_stop = utility_code.parseJosiahPickupAtCode(single_pageslip_string)
         las_customer_code = self.parse_josiah_location_code( single_pageslip_string )
-        patron_name = parsePatronName( single_pageslip_string )
-        patron_barcode = parsePatronBarcode( single_pageslip_string )
+        patron_name = utility_code.parsePatronName( single_pageslip_string )
+        patron_barcode = utility_code.parsePatronBarcode( single_pageslip_string )
         title = self.parse_title( single_pageslip_string )
-        las_date = prepareLasDate()
+        las_date = utility_code.prepareLasDate()
         note = self.parse_note( single_pageslip_string )
         full_line = '''"%s","%s","%s","%s","%s","%s","%s","%s","%s"''' % (
             record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note )
@@ -86,14 +86,28 @@ class Parser( object ):
             Called by controller.py """
         book_barcode = 'init'
         for line in single_page_slip:
-          stripped_line = line.strip()
-          if 'BARCODE:' in stripped_line:
-            temp_string = stripped_line[8:]   # gets everything after 'BARCODE:'
-            temp_string = temp_string.strip()   # removes outside whitespace, leaving barcode possibly containing space-characters
-            return_val = temp_string.replace( ' ', '' )
-            break
-        log.debug( 'book-barcode, `%s`' % return_val )
-        return return_val
+            stripped_line = line.strip()
+            if 'BARCODE:' in stripped_line:
+                temp_string = stripped_line[8:]   # gets everything after 'BARCODE:'
+                temp_string = temp_string.strip()   # removes outside whitespace, leaving barcode possibly containing space-characters
+                book_barcode = temp_string.replace( ' ', '' )
+                break
+        log.debug( 'book-barcode, `%s`' % book_barcode )
+        return book_barcode
+
+    # def parse_bookbarcode( self, single_page_slip ):
+    #     """ Parses book-barcode from lines of a single pageslip.
+    #         Called by controller.py """
+    #     book_barcode = 'init'
+    #     for line in single_page_slip:
+    #         stripped_line = line.strip()
+    #         if 'BARCODE:' in stripped_line:
+    #             temp_string = stripped_line[8:]   # gets everything after 'BARCODE:'
+    #             temp_string = temp_string.strip()   # removes outside whitespace, leaving barcode possibly containing space-characters
+    #             return_val = temp_string.replace( ' ', '' )
+    #             break
+    #     log.debug( 'book-barcode, `%s`' % return_val )
+    #     return return_val
 
     def parse_josiah_location_code( self, single_page_slip ):
         '''
@@ -107,7 +121,7 @@ class Parser( object ):
                 temp_string = stripped_line[9:]   # gets everything after 'LOCATION:'
                 temp_string = temp_string.strip()   # removes outside whitespace, leaving Josiah location
                 if not temp_string == '':
-                    return_val = convertJosiahLocationCode( temp_string )
+                    return_val = utility_code.convertJosiahLocationCode( temp_string )
                 break
         return return_val
 
