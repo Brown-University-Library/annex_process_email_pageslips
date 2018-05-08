@@ -100,6 +100,7 @@ class ItemListMakerTest( unittest.TestCase ):
     def test_pageslip_counts( self ):
         """ Checks number of pageslips found. """
         for test_dct in self.test_lst:
+            item_list_maker = utility_code.ItemListMaker()
             self.setUp()  # must force setUp for each loop run
             filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, test_dct['source'] )
             log.debug( 'testing source_file, ```%s```' % filepath )
@@ -107,9 +108,12 @@ class ItemListMakerTest( unittest.TestCase ):
                 utf8_text = f.read()
                 text = utf8_text.decode( 'utf-8' )
                 items = item_list_maker.make_item_list( text )
-                self.assertEqual( test_dct['pageslip_count'], len(items) )
-
-                self.assertEqual( test_dct['pageslip_count'], utility_code.determineCount(test_dct['pageslip_count'], items) )
+                self.assertEqual(
+                    test_dct['pageslip_count'],
+                    len(items ) )
+                self.assertEqual(
+                    test_dct['pageslip_count'],
+                    utility_code.determineCount( test_dct['pageslip_count'], item_list_maker.make_lines(text) ) )
 
     # def test_single_pageslip( self ):
     #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') ) as f:
