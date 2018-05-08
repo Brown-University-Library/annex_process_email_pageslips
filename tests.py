@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-import logging, os, pprint, sys, unittest
+import datetime, logging, os, pprint, sys, unittest
 
 
 ## settings from env/activate
@@ -183,19 +183,22 @@ class InputOutputTest( unittest.TestCase ):
         self.test_lst = [
             {'source': 'test_mail_01.txt',
                 'explanation': 'single entry',
-                'expected': [
-                    u'".i18459560","31236097691771","HA","QH","HAY CIRC STAFF (GHOST)","21234567890123","Brown University Archives Biographical Files","Mon May 07 2018","Jjjjj, Fffffff"',
-                    u'".i18730256","31236074029706","HA","QH","HAY CIRC STAFF (GHOST)","21234567890123","Brown University Archives Biographical Files","Mon May 07 2018","Jjjjj, Fffffff"',
-                    u'".i18077099","31236102480350","SC","QS","Lllll D Llllll","12345678901234","Mechanical engineering","Mon May 07 2018","no_note"',
-                    u'".i10310561","31236006485372","RO","QS","INTERLIBRARY LOAN/Eeeee Nn","12345678901234","Indianisme et bouddhisme : m\xe9langes offerts \xe0 Mgr","Mon May 07 2018","1980"',
-                    u'".i11132968","31236008418173","RO","QS","INTERLIBRARY LOAN/Nnnnn Yy","12345678901234","The Hedstroms and the bethel ship saga : Methodis","Mon May 07 2018","1992"'
+                'pre_expected': [
+                    u'".i18459560","31236097691771","HA","QH","HAY CIRC STAFF (GHOST)","21234567890123","Brown University Archives Biographical Files","REPLACE_DATE","Jjjjj, Fffffff"',
+                    u'".i18730256","31236074029706","HA","QH","HAY CIRC STAFF (GHOST)","21234567890123","Brown University Archives Biographical Files","REPLACE_DATE","Jjjjj, Fffffff"',
+                    u'".i18077099","31236102480350","SC","QS","Lllll D Llllll","12345678901234","Mechanical engineering","REPLACE_DATE","no_note"',
+                    u'".i10310561","31236006485372","RO","QS","INTERLIBRARY LOAN/Eeeee Nn","12345678901234","Indianisme et bouddhisme : m\xe9langes offerts \xe0 Mgr","REPLACE_DATE","1980"',
+                    u'".i11132968","31236008418173","RO","QS","INTERLIBRARY LOAN/Nnnnn Yy","12345678901234","The Hedstroms and the bethel ship saga : Methodis","REPLACE_DATE","1992"'
                     ]
                 },
             {'source': 'test_mail_02.txt',
                 'explanation': 'single entry',
-                'expected': [
-                    u'''".i11777585","31236013234144","RO","QS","Oooooooo I Aaaa","12345678901234","Licy e il Gattopardo : lettere d'amore di Giusepp","Mon May 07 2018","no_note"''',
-
+                'pre_expected': [
+                    u'".i11419377","31236082141766","HA","QH","Eeeeeee B Ssss","12345678901234","New principles of gardening: or, The laying out a","REPLACE_DATE","no_note"',
+                    u'".i11777585","31236013234144","RO","QS","Oooooooo I Aaaa","12345678901234","Licy e il Gattopardo : lettere d\'amore di Giusepp","REPLACE_DATE","no_note"',
+                    u'".i14242566","31236091444151","RO","QS","Oooooooo I Aaaa","12345678901234","Viaggio in Europa : epistolario 1925-1930","REPLACE_DATE","no_note"',
+                    u'".i16001362","31236074708960","HA","QH","Oooooooo I Aaaa","12345678901234","Two stories and a memory","REPLACE_DATE","no_note"',
+                    u'".i14558078","31236073110762","HA","QH","HAY CIRC STAFF (GHOST)","12345678901234","Theodore R. Sizer papers,","REPLACE_DATE","Uuuuuu, Iiiiiiii 9999"'
                     ]
                 },
         ]
@@ -205,7 +208,13 @@ class InputOutputTest( unittest.TestCase ):
         for source_dct in self.test_lst:
             filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, source_dct['source'] )
             log.debug( 'testing source_file, ```%s```' % filepath )
-            self.assertEqual( source_dct['expected'], utility_code.processor_wrapper( filepath ) )
+            expected = []
+            for element in source_dct['pre_expected']:
+                cur_dt_str = datetime.date.today().strftime( '%a %b %d %Y' )
+                element = element.replace( 'REPLACE_DATE', cur_dt_str )
+                log.debug( 'element, ```%s```' % element )
+                expected.append( element )
+            self.assertEqual( expected, utility_code.processor_wrapper( filepath ) )
 
     ## end class InputOutputTest()
 
@@ -223,7 +232,7 @@ class ParserTest( unittest.TestCase ):
                 'expected': {
                     u'book_barcode': u'31236097691771',
                     u'las_customer_code': u'QH',
-                    u'las_date': 'Mon May 07 2018',
+                    u'las_date': datetime.date.today().strftime( '%a %b %m %Y' ),  # eg 'Tue May 05 2018'
                     u'las_delivery_stop': u'HA',
                     u'note': u'Jjjjj, Fffffff',
                     u'patron_barcode': u'21234567890123',
@@ -238,7 +247,7 @@ class ParserTest( unittest.TestCase ):
                 'expected': {
                     u'book_barcode': u'31236082141766',
                     u'las_customer_code': u'QH',
-                    u'las_date': 'Mon May 07 2018',
+                    u'las_date': datetime.date.today().strftime( '%a %b %m %Y' ),
                     u'las_delivery_stop': u'HA',
                     u'note': u'no_note',
                     u'patron_barcode': u'12345678901234',
