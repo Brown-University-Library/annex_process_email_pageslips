@@ -37,12 +37,47 @@ class Controller(object):
             Called by ```if __name__ == '__main__':``` """
         log.debug( 'starting process_requests()' )
         self.check_paths()
-        if self.file_check():
+        file_handler = self.file_check()
+        if file_handler():
             date_stamp = utility_code.prepareDateTimeStamp( datetime.datetime.now() )
             self.copy_original_to_archives()
-            self.post_original_data_to_db()
+            self.post_original_to_db()
             pageslips_list = self.make_pageslips_list()
-            gaf_list = self.make_gaf_list()
+            gaf_list = self.make_gaf_list( pageslips_list )
+            self.post_parsed_to_db( gaf_list )
+            self.save_parsed_to_archives( gaf_list )
+            count = self.determine_count( pageslips_list )
+            self.save_count_and_data_to_gfa_dirs( count, pageslips_list )
+            self.delete_original()
+        log.debug( 'processing completed' )
+
+    def check_paths( self ):
+        """ Ensures all paths are correct.
+            Called by process_requests() """
+        check_a = utility_code.checkDirectoryExistence( self.PATH_TO_SOURCE_FILE_DIRECTORY )
+        check_b = utility_code.checkDirectoryExistence( self.PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY )
+        check_c = utility_code.checkDirectoryExistence( self.PATH_TO_ARCHIVES_PARSED_DIRECTORY )
+        check_d = utility_code.checkDirectoryExistence( self.PATH_TO_PARSED_ANNEX_DATA_DIRECTORY )
+        check_e = utility_code.checkDirectoryExistence( self.PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY )
+        if check_a == 'exists' and check_b == 'exists' and check_c == 'exists' and check_d == 'exists' and check_e == 'exists':
+          log.debug( 'path check passed' )
+        else:
+          message='path check failed; quitting'
+          log.error( message )
+          sys.exit( message )
+        return
+
+    def file_check( self ):
+        try:
+          file_handler = open( self.PATH_TO_SOURCE_FILE )
+          log.info( 'annex requests found' )
+          return file_handler
+        except Exception, e:
+          message = 'no annex requests found; quitting'
+          log.debug( message )
+          sys.exit( message )
+
+
 
     ## end class Controller()
 
