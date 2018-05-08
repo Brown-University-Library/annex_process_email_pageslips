@@ -232,7 +232,7 @@ class ParserTest( unittest.TestCase ):
                 'expected': {
                     u'book_barcode': u'31236097691771',
                     u'las_customer_code': u'QH',
-                    u'las_date': datetime.date.today().strftime( '%a %b %m %Y' ),  # eg 'Tue May 05 2018'
+                    u'las_date': datetime.date.today().strftime( '%a %b %d %Y' ),  # eg 'Tue May 05 2018'
                     u'las_delivery_stop': u'HA',
                     u'note': u'Jjjjj, Fffffff',
                     u'patron_barcode': u'21234567890123',
@@ -247,7 +247,7 @@ class ParserTest( unittest.TestCase ):
                 'expected': {
                     u'book_barcode': u'31236082141766',
                     u'las_customer_code': u'QH',
-                    u'las_date': datetime.date.today().strftime( '%a %b %m %Y' ),
+                    u'las_date': datetime.date.today().strftime( '%a %b %d %Y' ),
                     u'las_delivery_stop': u'HA',
                     u'note': u'no_note',
                     u'patron_barcode': u'12345678901234',
