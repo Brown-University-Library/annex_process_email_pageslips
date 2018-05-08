@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-import datetime, logging, os, shutil, smtplib, string, sys
+import datetime, logging, os, pprint, shutil, smtplib, string, sys
 from email.Header import Header
 from email.mime.text import MIMEText
 sys.path.append( os.environ['EML_PGSLP__ENCLOSING_PROJECT_PATH'] )
@@ -37,12 +37,12 @@ class Controller(object):
             Called by ```if __name__ == '__main__':``` """
         log.debug( 'starting process_requests()' )
         self.check_paths()
-        file_handler = self.file_check()
-        if file_handler():
+        data = self.file_check()
+        if data:
             date_stamp = utility_code.prepareDateTimeStamp( datetime.datetime.now() )
-            self.copy_original_to_archives()
-            self.post_original_to_db()
-            pageslips_list = self.make_pageslips_list()
+            self.copy_original_to_archives( date_stamp )
+            self.post_original_to_db( data, date_stamp )
+            pageslips_list = self.make_pageslips_list( data )
             gaf_list = self.make_gaf_list( pageslips_list )
             self.post_parsed_to_db( gaf_list )
             self.save_parsed_to_archives( gaf_list )
@@ -68,16 +68,92 @@ class Controller(object):
         return
 
     def file_check( self ):
+        """ Sees if there is a file waiting; returns unicode-text if so.
+            Called by process_requests() """
         try:
           file_handler = open( self.PATH_TO_SOURCE_FILE )
           log.info( 'annex requests found' )
-          return file_handler
         except Exception, e:
           message = 'no annex requests found; quitting'
           log.debug( message )
           sys.exit( message )
+        utf8_data = file_handler.read()
+        data = utf8_data.encode( 'utf-8' )
+        return data
 
+    def copy_original_to_archives( self, date_stamp ):
+        """ Copies original file to archives.
+            Called by process_requests() """
+        original_archive_file_path = '%s/REQ-ORIG_%s.dat' % ( self.PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY, date_stamp )   # i.e. '/path/REQ-ORIG_2005-05-19T15/08/09.dat'
+        try:
+          shutil.copyfile( self.PATH_TO_SOURCE_FILE, original_archive_file_path )
+          os.chmod( original_archive_file_path, 0640 )
+          log.debug( 'source file copied to original archives' )
+        except Exception, e:
+          message = 'copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( self.PATH_TO_SOURCE_FILE, original_archive_file_path, e )
+          log.error( message )
+          sys.exit( message )
+        copy_check = utility_code.checkFileExistence( original_archive_file_path )
+        if copy_check == 'exists':
+          log.info( 'original file copied to: %s' % original_archive_file_path )
+        else:
+          message = 'copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( self.PATH_TO_SOURCE_FILE, original_archive_file_path, copy_check )
+          log.error( message )
+          sys.exit( message )
+        return
 
+    def post_original_to_db( self, data, date_stamp ):
+        """ Posts original file to annex-processor-viewer.
+            Called by process_requests() """
+        post_result = 'init'
+        try:
+            post_result = utility_code.postFileData( identifier=date_stamp, file_data=data, update_type='original_file' )
+            log.debug( 'original_file post_result, `%s`' % post_result )
+        except Exception, e:
+            log.error( 'original_file post_result exception is: %s' % e )
+        if not post_result == 'success':
+            log.debug( 'post_result not "success"; but continuing' )
+        return
+
+    def make_pageslips_list( self, data ):
+        """ Returns list of pageslips, where each pageslip is a list of lines.
+            Called by process_requests() """
+        item_list_maker = utility_code.ItemListMaker()
+        item_list = item_list_maker.make_item_list( data )
+        log.info( 'item_list prepared' )
+        return item_list
+
+    def make_gaf_list( self, pageslips_list ):
+        """ Converts list of pageslips into list of items for gfa software.
+            Called by process_requests() """
+        new_item_list = []
+        pageslip_count = 0
+        for item in pageslips_list:
+            try:
+                parser = utility_code.Parser()
+                record_number = utility_code.parseRecordNumber(item)
+                book_barcode = parser.parse_bookbarcode( item )
+                las_delivery_stop = utility_code.parseJosiahPickupAtCode(item)
+                las_customer_code = parser.parse_josiah_location_code( item )
+                patron_name = utility_code.parsePatronName(item)
+                patron_barcode = utility_code.parsePatronBarcode(item)
+                title = parser.parse_title( item )
+                las_date = utility_code.prepareLasDate()
+                note = parser.parse_note( item )
+                full_line = '''"%s","%s","%s","%s","%s","%s","%s","%s","%s"''' % ( record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note )
+                new_item_list.append( full_line )
+                pageslip_count = pageslip_count + 1
+                if pageslip_count % 10 == 0:
+                    log.debug( '`%s` pageslips processed so far...' % pageslip_count )
+            except Exception, e:
+                subject = 'annex process pageslips problem'
+                message = 'iterating through item_list; problem with item "%s"; exception is: %s' % ( item, unicode(repr(e)) )
+                logger.error( message )
+                m = Mailer( subject, message )
+                m.send_email()
+        log.info( '`%s` items parsed' % pageslip_count )
+        log.debug( 'new_item_list, ```%s```' % pprint.pformat(new_item_list) )
+        return new_item_list
 
     ## end class Controller()
 
