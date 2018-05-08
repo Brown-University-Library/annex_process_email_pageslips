@@ -36,6 +36,13 @@ class Controller(object):
         """ Calls steps.
             Called by ```if __name__ == '__main__':``` """
         log.debug( 'starting process_requests()' )
+        self.check_paths()
+        if self.file_check():
+            date_stamp = utility_code.prepareDateTimeStamp( datetime.datetime.now() )
+            self.copy_original_to_archives()
+            self.post_original_data_to_db()
+            pageslips_list = self.make_pageslips_list()
+            gaf_list = self.make_gaf_list()
 
     ## end class Controller()
 
