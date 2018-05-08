@@ -125,6 +125,7 @@ class Controller(object):
 
     def make_gaf_list( self, pageslips_list ):
         """ Converts list of pageslips into list of items for gfa software.
+            TODO: call parser.process_all() here instead of individual elements.
             Called by process_requests() """
         new_item_list = []
         pageslip_count = 0
