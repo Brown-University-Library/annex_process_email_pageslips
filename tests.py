@@ -109,6 +109,8 @@ class ItemListMakerTest( unittest.TestCase ):
                 items = item_list_maker.make_item_list( text )
                 self.assertEqual( test_dct['pageslip_count'], len(items) )
 
+                self.assertEqual( test_dct['pageslip_count'], utility_code.determineCount(test_dct['pageslip_count'], items) )
+
     # def test_single_pageslip( self ):
     #     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') ) as f:
     #       text = f.read()
@@ -389,71 +391,71 @@ class MiscellaneousFunctionTester(unittest.TestCase):
       'ED',
       utility_code.convertJosiahPickupAtCode('Elec. Delivery (Annex Articles)') )
 
-  def test_determineCount(self):
+  # def test_determineCount(self):
 
-    TEST_FILES_DIR_PATH = os.environ['EML_PGSLP__TEST_FILES_DIR_PATH']
+  #   TEST_FILES_DIR_PATH = os.environ['EML_PGSLP__TEST_FILES_DIR_PATH']
 
-    # single pageslip
-    number_of_parsed_items = 1
-    # file_reference = open( 'test_files/testFile01_singleEntry.txt' )
-    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') )
-    data = file_reference.read()
-    lines = data.split( '\n' )
-    expected = 1
-    result = utility_code.determineCount( number_of_parsed_items, lines )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # single pageslip
+  #   number_of_parsed_items = 1
+  #   # file_reference = open( 'test_files/testFile01_singleEntry.txt' )
+  #   file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') )
+  #   data = file_reference.read()
+  #   lines = data.split( '\n' )
+  #   expected = 1
+  #   result = utility_code.determineCount( number_of_parsed_items, lines )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # single short pageslip
-    number_of_parsed_items = 5
-    # file_reference = open( 'test_files/testFile02_incorrectSciPickup.txt' )
-    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile02_incorrectSciPickup.txt') )
-    data = file_reference.read()
-    lines = data.split( '\n' )
-    expected = 5
-    result = utility_code.determineCount( number_of_parsed_items, lines )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # single short pageslip
+  #   number_of_parsed_items = 5
+  #   # file_reference = open( 'test_files/testFile02_incorrectSciPickup.txt' )
+  #   file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile02_incorrectSciPickup.txt') )
+  #   data = file_reference.read()
+  #   lines = data.split( '\n' )
+  #   expected = 5
+  #   result = utility_code.determineCount( number_of_parsed_items, lines )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # single pageslip, no '38...'
-    number_of_parsed_items = 1
-    # file_reference = open( 'test_files/testFile11_singleNo38.txt' )
-    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile11_singleNo38.txt') )
-    data = file_reference.read()
-    lines = data.split( '\n' )
-    expected = 1
-    result = utility_code.determineCount( number_of_parsed_items, lines )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # single pageslip, no '38...'
+  #   number_of_parsed_items = 1
+  #   # file_reference = open( 'test_files/testFile11_singleNo38.txt' )
+  #   file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile11_singleNo38.txt') )
+  #   data = file_reference.read()
+  #   lines = data.split( '\n' )
+  #   expected = 1
+  #   result = utility_code.determineCount( number_of_parsed_items, lines )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # multiple pageslips
-    number_of_parsed_items = 6
-    # file_reference = open( 'test_files/testFile03_itemNumberAddition.txt' )
-    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile03_itemNumberAddition.txt') )
-    data = file_reference.read()
-    lines = data.split( '\n' )
-    expected = 6
-    result = utility_code.determineCount( number_of_parsed_items, lines )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # multiple pageslips
+  #   number_of_parsed_items = 6
+  #   # file_reference = open( 'test_files/testFile03_itemNumberAddition.txt' )
+  #   file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile03_itemNumberAddition.txt') )
+  #   data = file_reference.read()
+  #   lines = data.split( '\n' )
+  #   expected = 6
+  #   result = utility_code.determineCount( number_of_parsed_items, lines )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # multiple pageslips, one missing last '38...' line
-    number_of_parsed_items = 7
-    # file_reference = open( 'test_files/testFile04_longNotes.txt' )
-    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') )
-    data = file_reference.read()
-    lines = data.split( '\n' )
-    expected = 7
-    result = utility_code.determineCount( number_of_parsed_items, lines )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # multiple pageslips, one missing last '38...' line
+  #   number_of_parsed_items = 7
+  #   # file_reference = open( 'test_files/testFile04_longNotes.txt' )
+  #   file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') )
+  #   data = file_reference.read()
+  #   lines = data.split( '\n' )
+  #   expected = 7
+  #   result = utility_code.determineCount( number_of_parsed_items, lines )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # multiple pageslips, first two without the usual 'Brown University' four address lines
-    number_of_parsed_items = 6
-    # file_reference = open( 'test_files/testFile12_missing_brown_address.txt' )
-    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile12_missing_brown_address.txt') )
-    data = file_reference.read()
-    lines = data.split( '\n' )
-    expected = 6
-    result = utility_code.determineCount( number_of_parsed_items, lines )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # multiple pageslips, first two without the usual 'Brown University' four address lines
+  #   number_of_parsed_items = 6
+  #   # file_reference = open( 'test_files/testFile12_missing_brown_address.txt' )
+  #   file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile12_missing_brown_address.txt') )
+  #   data = file_reference.read()
+  #   lines = data.split( '\n' )
+  #   expected = 6
+  #   result = utility_code.determineCount( number_of_parsed_items, lines )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # end def test_determineCount()
+  #   # end def test_determineCount()
 
   def test_parseJosiahPickupAtCode(self):
     """ Takes lines list, returns josiah `pickup-at` code (the annex `delivery-stop` code). """
