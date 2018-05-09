@@ -20,7 +20,7 @@ logging.basicConfig(
     datefmt='%d/%b/%Y %H:%M:%S',
     )
 log = logging.getLogger(__name__)
-log.debug( '\n\nstarting log\n============' )
+log.info( '\n\nstarting log\n============' )
 
 
 class Controller(object):
@@ -78,7 +78,7 @@ class Controller(object):
           file_handler = open( self.PATH_TO_SOURCE_FILE )
           log.info( 'annex requests found' )
         except Exception, e:
-          message = 'no annex requests found; quitting'
+          message = 'no annex requests found; quitting\n\n'
           log.info( message )
           sys.exit( message )
         utf8_data = file_handler.read()
