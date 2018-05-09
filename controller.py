@@ -31,6 +31,8 @@ class Controller(object):
         self.PATH_TO_PARSED_ANNEX_DATA_DIRECTORY = os.environ['EML_PGSLP__PATH_TO_PARSED_ANNEX_DATA_DIRECTORY']
         self.PATH_TO_SOURCE_FILE = os.environ['EML_PGSLP__PATH_TO_SOURCE_FILE']
         self.PATH_TO_SOURCE_FILE_DIRECTORY = os.environ['EML_PGSLP__PATH_TO_SOURCE_FILE_DIRECTORY']
+        self.parsed_file_archive_path = ''  # created in one function; used in another
+        self.parsed_file_name = ''  # created in one function; used in another
 
     def process_requests( self ):
         """ Steps caller.
@@ -47,7 +49,7 @@ class Controller(object):
             unicode_parsed_data = self.post_parsed_to_db( gaf_list, date_stamp )
             self.save_parsed_to_archives( date_stamp, unicode_parsed_data )
             count = self.determine_count( unicode_src_data, pageslips_list )
-            self.save_count_and_data_to_gfa_dirs( count, pageslips_list )
+            self.save_count_and_data_to_gfa_dirs( date_stamp, count, unicode_parsed_data )
             self.delete_original()
         log.debug( 'processing completed' )
 
@@ -182,17 +184,17 @@ class Controller(object):
         """ Copies parsed file to archives.
             Called by process_requests() """
         try:
-          parsed_file_name = 'REQ-PARSED_%s.dat' % date_stamp
-          parsed_file_archive_path = '%s/%s' % ( self.PATH_TO_ARCHIVES_PARSED_DIRECTORY, parsed_file_name )
-          f = open( parsed_file_archive_path, 'w' )
+          self.parsed_file_name = 'REQ-PARSED_%s.dat' % date_stamp
+          self.parsed_file_archive_path = '%s/%s' % ( self.PATH_TO_ARCHIVES_PARSED_DIRECTORY, self.parsed_file_name )
+          f = open( self.parsed_file_archive_path, 'w' )
           f.write( unicode_string_data )
           f.close()
-          copy_check = utility_code.checkFileExistence( parsed_file_archive_path )
-          os.chmod( parsed_file_archive_path, 0640 )   # rw-/r--/---
+          copy_check = utility_code.checkFileExistence( self.parsed_file_archive_path )
+          os.chmod( self.parsed_file_archive_path, 0640 )   # rw-/r--/---
           if copy_check == 'exists':
-            log.info( 'parsed file archived to: %s' % parsed_file_archive_path )
+            log.info( 'parsed file archived to: %s' % self.parsed_file_archive_path )
           else:
-            message = 'write of parsed file to "%s" unsuccessful' % parsed_file_archive_path
+            message = 'write of parsed file to "%s" unsuccessful' % self.parsed_file_archive_path
             log.error( message )
             sys.exit( message )
         except Exception, e:
@@ -213,10 +215,60 @@ class Controller(object):
         log.info( 'count confirmed to be: %s' % confirmed_count )
         return confirmed_count
 
+    def save_count_and_data_to_gfa_dirs( self, date_stamp, count, unicode_parsed_data ):
+        """ Saves count file and data file to destination directories.
+            Called by process_requests() """
+        try:
+            count_file_name = 'REQ-PARSED_%s.cnt' % date_stamp
+            count_file_las_destination_path = '%s/%s' % ( self.PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY, count_file_name )
+            f = open( count_file_las_destination_path, 'w' )
+            f.write( '%s' % count + '\n' )
+            f.close()
+            try:
+                os.chmod( count_file_las_destination_path, 0666 )   # rw-/rw-/rw-
+            except Exception, e:
+                log.info( 'could not set file-permissions on count-destination-path; exception, `%s` -- continuing' % unicode(repr(e)) )
+            log.info( 'count file written to: ```%s```' % count_file_las_destination_path )
+        except Exception, e:
+            message = 'problem on save of count file to ```%s```; quitting; exception is: `%s`' % (count_file_las_destination_path, unicode(repr(e)) )
+            log.error( message )
+            sys.exit( message )
+        try:
+            parsed_file_las_destination_path = '%s/%s' % ( self.PATH_TO_PARSED_ANNEX_DATA_DIRECTORY, self.parsed_file_name )
+            shutil.copyfile( self.parsed_file_archive_path, parsed_file_las_destination_path )
+            try:
+                os.chmod( parsed_file_las_destination_path, 0666 )   # rw-/rw-/rw-
+            except Exception, e:
+                log.info( 'could not set file-permissions on data-destination-path; exception, `%s` -- continuing' % unicode(repr(e)) )
+            log.info( 'data file written to: ```%s```' % parsed_file_las_destination_path )
+        except Exception, e:
+            message = 'problem on save of data file to ```%s```; quitting; exception is: `%s`' % ( parsed_file_las_destination_path, unicode(repr(e)) )
+            log.error( message )
+            sys.exit( message )
+        return
+
+    def delete_original( self ):
+        """ Deletes original file.
+            Called by process_requests() """
+        try:
+            os.remove( self.PATH_TO_SOURCE_FILE )
+            copy_check = utility_code.checkFileExistence( self.PATH_TO_SOURCE_FILE )   # should not exist
+            if copy_check == 'exists':
+                message = 'deletion of original file at ```%s``` failed, as determined by copy_check' % self.PATH_TO_SOURCE_FILE
+                log.error( message )
+                sys.exit( message )
+            else:
+                log.info( message='deletion successful of original file at ```%s```' % self.PATH_TO_SOURCE_FILE )
+        except Exception, e:
+            message = 'deletion of original file at ```%s``` failed; exception, `%s`' % ( self.PATH_TO_SOURCE_FILE, unicode(repr(e)) )
+            log.error( message )
+            sys.exit( message )
+        return
+
     ## end class Controller()
 
 
 if __name__ == '__main__':
     c = Controller()
     c.process_requests()
-    log.debug( 'complete' )
+    log.debug( '__main__ complete' )
