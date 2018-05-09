@@ -182,14 +182,14 @@ class Controller(object):
             log.debug( 'post_result of parsed file not "success"; but continuing' )
         return unicode_string_data
 
-    def save_parsed_to_archives( self, date_stamp, unicode_string_data ):
+    def save_parsed_to_archives( self, date_stamp, unicode_parsed_data ):
         """ Copies parsed file to archives.
             Called by process_requests() """
         try:
           self.parsed_file_name = 'REQ-PARSED_%s.dat' % date_stamp
           self.parsed_file_archive_path = '%s/%s' % ( self.PATH_TO_ARCHIVES_PARSED_DIRECTORY, self.parsed_file_name )
           f = open( self.parsed_file_archive_path, 'w' )
-          f.write( unicode_string_data )
+          f.write( unicode_parsed_data )
           f.close()
           copy_check = utility_code.checkFileExistence( self.parsed_file_archive_path )
           os.chmod( self.parsed_file_archive_path, 0640 )   # rw-/r--/---
@@ -203,6 +203,7 @@ class Controller(object):
           message = 'problem on save of parsed file; quitting; exception is: %s' % unicode(repr(e))
           log.error( message )
           sys.exit( message )
+        return
 
     def determine_count( self, unicode_string, item_list ):
         """ Confirms count
