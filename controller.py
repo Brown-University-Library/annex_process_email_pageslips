@@ -33,7 +33,7 @@ class Controller(object):
         self.PATH_TO_SOURCE_FILE_DIRECTORY = os.environ['EML_PGSLP__PATH_TO_SOURCE_FILE_DIRECTORY']
 
     def process_requests( self ):
-        """ Calls steps.
+        """ Steps caller.
             Called by ```if __name__ == '__main__':``` """
         log.debug( 'starting process_requests()' )
         self.check_paths()
@@ -44,8 +44,8 @@ class Controller(object):
             self.post_original_to_db( data, date_stamp )
             pageslips_list = self.make_pageslips_list( data )
             gaf_list = self.make_gaf_list( pageslips_list )
-            self.post_parsed_to_db( gaf_list )
-            self.save_parsed_to_archives( gaf_list )
+            unicode_string_data = self.post_parsed_to_db( gaf_list, date_stamp )
+            self.save_parsed_to_archives( date_stamp, unicode_string_data )
             count = self.determine_count( pageslips_list )
             self.save_count_and_data_to_gfa_dirs( count, pageslips_list )
             self.delete_original()
@@ -108,7 +108,7 @@ class Controller(object):
         post_result = 'init'
         try:
             post_result = utility_code.postFileData( identifier=date_stamp, file_data=data, update_type='original_file' )
-            log.debug( 'original_file post_result, `%s`' % post_result )
+            log.info( 'original_file post_result, `%s`' % post_result )
         except Exception, e:
             log.error( 'original_file post_result exception is: %s' % e )
         if not post_result == 'success':
@@ -155,6 +155,48 @@ class Controller(object):
         log.info( '`%s` items parsed' % pageslip_count )
         log.debug( 'new_item_list, ```%s```' % pprint.pformat(new_item_list) )
         return new_item_list
+
+    def post_parsed_to_db( self, gaf_list, date_stamp ):
+        """ Posts parsed data to annex-processor-viewer.
+            Called by process_requests() """
+        unicode_string_data = ''
+        count = 0
+        for line in gaf_list:
+            if count == 0:
+                unicode_string_data = line
+            else:
+                unicode_string_data = unicode_string_data + '\n' + line
+            count = count + 1
+        unicode_string_data = unicode_string_data + '\n'   # the final newline is likely not necessary but unixy, and exists in old system
+        post_result = 'init'
+        try:
+            post_result = utility_code.postFileData( identifier=date_stamp, file_data=unicode_string_data, update_type='parsed_file' )
+            log.info( 'parsed_file post_result is: %s' % post_result )
+        except Exception, e:
+            log.error( 'parsed_file post_result exception is: %s' % unicode(repr(e)) )
+        if not post_result == 'success':
+            log.debug( 'post_result of parsed file not "success"; but continuing' )
+        return unicode_string_data
+
+    def save_parsed_to_archives( self, date_stamp, unicode_string_data ):
+        try:
+          parsed_file_name = 'REQ-PARSED_%s.dat' % date_stamp
+          parsed_file_archive_path = '%s/%s' % ( self.PATH_TO_ARCHIVES_PARSED_DIRECTORY, parsed_file_name )
+          f = open( parsed_file_archive_path, 'w' )
+          f.write( unicode_string_data )
+          f.close()
+          copy_check = utility_code.checkFileExistence( parsed_file_archive_path )
+          os.chmod( parsed_file_archive_path, 0640 )   # rw-/r--/---
+          if copy_check == 'exists':
+            utility_code.updateLog( message='- parsed file archived to: %s' % parsed_file_archive_path )
+          else:
+            message = '- write of parsed file to "%s" unsuccessful' % parsed_file_archive_path
+            utility_code.updateLog( message=message, message_importance='high' )
+            sys.exit( message )
+        except Exception, e:
+          message='- problem on save of parsed file; quitting; exception is: %s' % e
+          utility_code.updateLog( message=message, message_importance='high' )
+          sys.exit( message )
 
     ## end class Controller()
 
