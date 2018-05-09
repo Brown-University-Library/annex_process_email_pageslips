@@ -258,7 +258,7 @@ class Controller(object):
                 log.error( message )
                 sys.exit( message )
             else:
-                log.info( message='deletion successful of original file at ```%s```' % self.PATH_TO_SOURCE_FILE )
+                log.info( 'deletion successful of original file at ```%s```' % self.PATH_TO_SOURCE_FILE )
         except Exception, e:
             message = 'deletion of original file at ```%s``` failed; exception, `%s`' % ( self.PATH_TO_SOURCE_FILE, unicode(repr(e)) )
             log.error( message )
