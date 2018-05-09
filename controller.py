@@ -11,9 +11,11 @@ from process_email_pageslips.lib import utility_code
 from process_email_pageslips.lib.utility_code import Mailer
 
 
+lvl_dct = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+lvl = os.environ['EML_PGSLP__LOG_LEVEL']
 logging.basicConfig(
     filename=os.environ['EML_PGSLP__LOG_PATH'],
-    level=logging.DEBUG,
+    level=lvl,
     format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
     datefmt='%d/%b/%Y %H:%M:%S',
     )
@@ -77,7 +79,7 @@ class Controller(object):
           log.info( 'annex requests found' )
         except Exception, e:
           message = 'no annex requests found; quitting'
-          log.debug( message )
+          log.info( message )
           sys.exit( message )
         utf8_data = file_handler.read()
         data = utf8_data.encode( 'utf-8' )
