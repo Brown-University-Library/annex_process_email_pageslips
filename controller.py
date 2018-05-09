@@ -37,16 +37,16 @@ class Controller(object):
             Called by ```if __name__ == '__main__':``` """
         log.debug( 'starting process_requests()' )
         self.check_paths()
-        data = self.file_check()
-        if data:
+        unicode_src_data = self.file_check()
+        if unicode_src_data:
             date_stamp = utility_code.prepareDateTimeStamp( datetime.datetime.now() )
             self.copy_original_to_archives( date_stamp )
-            self.post_original_to_db( data, date_stamp )
-            pageslips_list = self.make_pageslips_list( data )
+            self.post_original_to_db( unicode_src_data, date_stamp )
+            pageslips_list = self.make_pageslips_list( unicode_src_data )
             gaf_list = self.make_gaf_list( pageslips_list )
-            unicode_string_data = self.post_parsed_to_db( gaf_list, date_stamp )
-            self.save_parsed_to_archives( date_stamp, unicode_string_data )
-            count = self.determine_count( pageslips_list )
+            unicode_parsed_data = self.post_parsed_to_db( gaf_list, date_stamp )
+            self.save_parsed_to_archives( date_stamp, unicode_parsed_data )
+            count = self.determine_count( unicode_src_data, pageslips_list )
             self.save_count_and_data_to_gfa_dirs( count, pageslips_list )
             self.delete_original()
         log.debug( 'processing completed' )
@@ -200,9 +200,18 @@ class Controller(object):
           log.error( message )
           sys.exit( message )
 
-    dev determine_count( self, pageslips_list ):
-        """ Copies parsed file to archives.
+    def determine_count( self, unicode_string, item_list ):
+        """ Confirms count
             Called by process_requests() """
+        item_list_maker = utility_code.ItemListMaker()
+        lines = item_list_maker.make_lines( unicode_string )
+        confirmed_count = utility_code.determineCount( len(item_list), lines )
+        if confirmed_count == 0:   # if two methods of determining count don't match, zero is returned
+            message = 'problem on determining count; quitting'
+            log.error( message )
+            sys.exit( message )
+        log.info( 'count confirmed to be: %s' % confirmed_count )
+        return confirmed_count
 
     ## end class Controller()
 
