@@ -179,6 +179,8 @@ class Controller(object):
         return unicode_string_data
 
     def save_parsed_to_archives( self, date_stamp, unicode_string_data ):
+        """ Copies parsed file to archives.
+            Called by process_requests() """
         try:
           parsed_file_name = 'REQ-PARSED_%s.dat' % date_stamp
           parsed_file_archive_path = '%s/%s' % ( self.PATH_TO_ARCHIVES_PARSED_DIRECTORY, parsed_file_name )
@@ -188,15 +190,19 @@ class Controller(object):
           copy_check = utility_code.checkFileExistence( parsed_file_archive_path )
           os.chmod( parsed_file_archive_path, 0640 )   # rw-/r--/---
           if copy_check == 'exists':
-            utility_code.updateLog( message='- parsed file archived to: %s' % parsed_file_archive_path )
+            log.info( 'parsed file archived to: %s' % parsed_file_archive_path )
           else:
-            message = '- write of parsed file to "%s" unsuccessful' % parsed_file_archive_path
-            utility_code.updateLog( message=message, message_importance='high' )
+            message = 'write of parsed file to "%s" unsuccessful' % parsed_file_archive_path
+            log.error( message )
             sys.exit( message )
         except Exception, e:
-          message='- problem on save of parsed file; quitting; exception is: %s' % e
-          utility_code.updateLog( message=message, message_importance='high' )
+          message = 'problem on save of parsed file; quitting; exception is: %s' % unicode(repr(e))
+          log.error( message )
           sys.exit( message )
+
+    dev determine_count( self, pageslips_list ):
+        """ Copies parsed file to archives.
+            Called by process_requests() """
 
     ## end class Controller()
 
