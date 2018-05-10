@@ -270,20 +270,11 @@ def postFileData( identifier, file_data, update_type ):
         Called by Controller.post_original_to_db() and Controller.post_parsed_to_db() """
     ADMIN_LOG_URL = os.environ['EML_PGSLP__ADMIN_LOG_URL']
     ADMIN_LOG_KEY = os.environ['EML_PGSLP__ADMIN_LOG_KEY']
-    assert type(file_data) == 2, type(file_data)
+    assert type(file_data) == unicode, type(file_data)
     if update_type == 'original_file':
-        values = {
-            'key': ADMIN_LOG_KEY,
-            'identifier': identifier,
-            'original_file_data': file_data
-            }
+        values = { 'key': ADMIN_LOG_KEY, 'identifier': identifier, 'original_file_data': file_data.encode('utf-8') }
     else:
-        values = {
-            'key': ADMIN_LOG_KEY,
-            'identifier': identifier,
-            'parsed_file_data': file_data
-            }
-
+        values = { 'key': ADMIN_LOG_KEY, 'identifier': identifier, 'parsed_file_data': file_data.encode('utf-8') }
     try:
         data = urllib.urlencode(values)
         request = urllib2.Request( ADMIN_LOG_URL, data )
@@ -291,9 +282,8 @@ def postFileData( identifier, file_data, update_type ):
         returned_data = response.read()
         return returned_data
     except Exception, e:
-        return '- in postFileData(); exception is: %s' % e
-
-    ## end def postFileData()
+        log.error( 'exception posting file, ```%s```; continuing' % unicode(repr(e)) )
+    return
 
 
 
