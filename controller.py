@@ -190,7 +190,7 @@ class Controller(object):
           self.parsed_file_name = 'REQ-PARSED_%s.dat' % date_stamp
           self.parsed_file_archive_path = '%s/%s' % ( self.PATH_TO_ARCHIVES_PARSED_DIRECTORY, self.parsed_file_name )
           f = open( self.parsed_file_archive_path, 'w' )
-          f.write( unicode_parsed_data )
+          f.write( unicode_parsed_data.encode('utf-8') )
           f.close()
           copy_check = utility_code.checkFileExistence( self.parsed_file_archive_path )
           os.chmod( self.parsed_file_archive_path, 0640 )   # rw-/r--/---
@@ -226,7 +226,8 @@ class Controller(object):
             count_file_name = 'REQ-PARSED_%s.cnt' % date_stamp
             count_file_las_destination_path = '%s/%s' % ( self.PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY, count_file_name )
             f = open( count_file_las_destination_path, 'w' )
-            f.write( '%s' % count + '\n' )
+            count_str = '%s' % count + '\n'
+            f.write( count_str.encode('utf-8') )
             f.close()
             try:
                 os.chmod( count_file_las_destination_path, 0666 )   # rw-/rw-/rw-
