@@ -82,7 +82,8 @@ class Controller(object):
           log.info( message )
           sys.exit( message )
         utf8_data = file_handler.read()
-        data = utf8_data.encode( 'utf-8' )
+        assert type(utf8_data) == str, type(utf8_data)
+        data = utf8_data.decode( 'utf-8' )
         return data
 
     def copy_original_to_archives( self, date_stamp ):
