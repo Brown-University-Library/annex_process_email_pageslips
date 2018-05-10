@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 log.debug( 'START' )
 
 from process_email_pageslips.lib.parser_helper import Parser
-from process_email_pageslips.lib.item_list_maker import ItemListMaker
+from process_email_pageslips.lib.item_list_helper import ItemListMaker
 
 
 def processor_wrapper( filepath ):
