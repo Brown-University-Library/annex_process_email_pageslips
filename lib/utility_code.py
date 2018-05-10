@@ -37,18 +37,15 @@ def processor_wrapper( filepath ):
 
 
 def checkDirectoryExistence( directory_path ):
-  '''
-  - Called by: opac_to_las_python_parser_code.controller
-  - Purpose: confirm existence of directories before starting processing.
-  '''
-
-  if os.path.exists(directory_path):
-    return 'exists'
-  else:
-    updateLog( message='- directory_path "%s" does not exist' % directory_path, message_importance='high' )
-    return 'does_not_exist'
-
-  # end def checkDirectoryExistence()
+    '''
+    - Called by: opac_to_las_python_parser_code.controller
+    - Purpose: confirm existence of directories before starting processing.
+    '''
+    if os.path.exists(directory_path):
+        return 'exists'
+    else:
+        log.error( 'directory_path ```%s``` does not exist' % directory_path )
+        return 'does_not_exist'
 
 
 
