@@ -266,37 +266,69 @@ def parseRecordNumber( single_page_slip ):
 
 
 def postFileData( identifier, file_data, update_type ):
-  '''
-  - Purpose: to post the file data from the opened-&-read file.
-  - Called by: opac_to_las_python_parser_code.controller
-  '''
+    """ Posts file-data.
+        Called by Controller.post_original_to_db() and Controller.post_parsed_to_db() """
+    ADMIN_LOG_URL = os.environ['EML_PGSLP__ADMIN_LOG_URL']
+    ADMIN_LOG_KEY = os.environ['EML_PGSLP__ADMIN_LOG_KEY']
+    assert type(file_data) == 2, type(file_data)
+    if update_type == 'original_file':
+        values = {
+            'key': ADMIN_LOG_KEY,
+            'identifier': identifier,
+            'original_file_data': file_data
+            }
+    else:
+        values = {
+            'key': ADMIN_LOG_KEY,
+            'identifier': identifier,
+            'parsed_file_data': file_data
+            }
 
-  ADMIN_LOG_URL = os.environ['EML_PGSLP__ADMIN_LOG_URL']
-  ADMIN_LOG_KEY = os.environ['EML_PGSLP__ADMIN_LOG_KEY']
+    try:
+        data = urllib.urlencode(values)
+        request = urllib2.Request( ADMIN_LOG_URL, data )
+        response = urllib2.urlopen(request)
+        returned_data = response.read()
+        return returned_data
+    except Exception, e:
+        return '- in postFileData(); exception is: %s' % e
 
-  if update_type == 'original_file':
-    values = {
-      'key': ADMIN_LOG_KEY,
-      'identifier': identifier,
-      'original_file_data': file_data
-      }
-  else:
-    values = {
-      'key': ADMIN_LOG_KEY,
-      'identifier': identifier,
-      'parsed_file_data': file_data
-      }
+    ## end def postFileData()
 
-  try:
-    data = urllib.urlencode(values)
-    request = urllib2.Request( ADMIN_LOG_URL, data )
-    response = urllib2.urlopen(request)
-    returned_data = response.read()
-    return returned_data
-  except Exception, e:
-    return '- in postFileData(); exception is: %s' % e
 
-  # end def sampleOriginalDataPostingScript()
+
+# def postFileData( identifier, file_data, update_type ):
+#   '''
+#   - Purpose: to post the file data from the opened-&-read file.
+#   - Called by: opac_to_las_python_parser_code.controller
+#   '''
+
+#   ADMIN_LOG_URL = os.environ['EML_PGSLP__ADMIN_LOG_URL']
+#   ADMIN_LOG_KEY = os.environ['EML_PGSLP__ADMIN_LOG_KEY']
+
+#   if update_type == 'original_file':
+#     values = {
+#       'key': ADMIN_LOG_KEY,
+#       'identifier': identifier,
+#       'original_file_data': file_data
+#       }
+#   else:
+#     values = {
+#       'key': ADMIN_LOG_KEY,
+#       'identifier': identifier,
+#       'parsed_file_data': file_data
+#       }
+
+#   try:
+#     data = urllib.urlencode(values)
+#     request = urllib2.Request( ADMIN_LOG_URL, data )
+#     response = urllib2.urlopen(request)
+#     returned_data = response.read()
+#     return returned_data
+#   except Exception, e:
+#     return '- in postFileData(); exception is: %s' % e
+
+#   ## end def postFileData()
 
 
 
