@@ -72,7 +72,9 @@ def convertJosiahLocationCode( code ):
   full_url = '%s%s/' % ( JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
   log.debug( 'full_url, ```%s```' % full_url )
   try:
-    string_data = urllib.urlopen( full_url ).read()
+    rqst = urllib2.Request( full_url, headers={'user-agent': 'annex_pageslip_processor'} )
+    rspns = urllib2.urlopen( rqst )
+    string_data = rspns.read()
     json_data = json.loads( string_data )
     result = json_data['result']['returned_las_code']
     return result
@@ -97,7 +99,9 @@ def convertJosiahPickupAtCode( code ):
   full_url = '%s%s/' % ( JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
   log.debug( 'full_url, ```%s```' % full_url )
   try:
-    string_data = urllib.urlopen( full_url ).read()
+    rqst = urllib2.Request( full_url, headers={'user-agent': 'annex_pageslip_processor'} )
+    rspns = urllib2.urlopen( rqst )
+    string_data = rspns.read()
     json_data = json.loads( string_data )
     result = json_data['result']['returned_las_code']
     return result
@@ -112,29 +116,6 @@ def convertJosiahPickupAtCode( code ):
     return 'unknown_pickup'
 
   # end def convertJosiahPickupAtCode()
-
-
-# def convertJosiahPickupAtCode( code ):
-#   '''
-#   - Purpose: input - josiah pickup-at code; output - las delivery-stop code
-#   - Called by: utility_code.parseJosiahPickupAtCode()
-#   '''
-
-#   JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX = os.environ['EML_PGSLP__JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX']
-
-#   full_url = '%s%s' % ( JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
-
-#   try:
-#     string_data = urllib.urlopen( full_url ).read()
-#     json_data = json.loads( string_data )
-#     result = json_data['result']['returned_las_code']
-#     return result
-#   except Exception, e:
-#     updateLog( message='- in convertJosiahPickupAtCode(); exception is: %s' % e )
-#     return 'failure, exception is: %s' % e
-
-#   # end def convertJosiahPickupAtCode()
-
 
 
 def determineCount( number_of_parsed_items, pageslip_lines ):
